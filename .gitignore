@@ -1,0 +1,29 @@
+
+# Secrets and credentials
+secrets/
+srcs/.env
+.env
+.env.*
+
+# Docker data and volumes
+data/
+*.sql
+*.sqlite
+*.tar
+*.tar.gz
+
+# VM and local files
+*.vdi
+*.vmdk
+*.vbox
+*.iso
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS files
+.DS_Store
+

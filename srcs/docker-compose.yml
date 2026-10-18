@@ -1,0 +1,90 @@
+
+services:
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    build:
+      context: ./requirements/mariadb
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+    secrets:
+      - db_password
+      - db_root_password
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - inception
+
+  wordpress:
+    container_name: wordpress
+    image: wordpress
+    build:
+      context: ./requirements/wordpress
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+    environment:
+      DOMAIN_NAME: ${DOMAIN_NAME}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      WP_ADMIN_USER: ${WP_ADMIN_USER}
+      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+      WP_USER: ${WP_USER}
+      WP_USER_EMAIL: ${WP_USER_EMAIL}
+    secrets:
+      - db_password
+      - wp_admin_password
+      - wp_user_password
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - inception
+
+  nginx:
+    container_name: nginx
+    image: nginx
+    build:
+      context: ./requirements/nginx
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - wordpress
+    ports:
+      - "443:443"
+    volumes:
+      - wordpress_data:/var/www/html:ro
+    networks:
+      - inception
+
+
+networks:
+  inception:
+    driver: bridge
+
+
+volumes:
+  mariadb_data:
+    name: srcs_mariadb_data
+    driver: local
+
+  wordpress_data:
+    name: srcs_wordpress_data
+    driver: local
+
+
+secrets:
+  db_password:
+    file: ../secrets/db_password.txt
+
+  db_root_password:
+    file: ../secrets/db_root_password.txt
+
+  wp_admin_password:
+    file: ../secrets/wp_admin_password.txt
+
+  wp_user_password:
+    file: ../secrets/wp_user_password.txt
