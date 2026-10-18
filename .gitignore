@@ -27,3 +27,6 @@ data/
 # OS files
 .DS_Store
 
+
+# Safe template exception
+!srcs/.env.example
