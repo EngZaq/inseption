@@ -10,7 +10,7 @@ ROOT_PASS=$(cat /run/secrets/db_root_password)
 mkdir -p /run/mysqld
 chown mysql:mysql /run/mysqld
 
-if [ ! -d /var/lib/mysql/mysql ]; then
+if [ ! -d "/var/lib/mysql/${MYSQL_DATABASE}" ]; then
     echo "Initializing MariaDB..."
 
     mariadb-install-db \

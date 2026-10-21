@@ -54,22 +54,15 @@ if ! wp core is-installed --allow-root; then
         --allow-root
 fi
 
-
 if wp user get "$WP_USER" --allow-root >/dev/null 2>&1; then
-    echo "WordPress user already exists."
-elif wp user list --field=user_email --allow-root |
-    grep -Fxq "$WP_USER_EMAIL"; then
-    echo "ERROR: Email is already registered to another user." >&2
-    exit 1
+    echo "WordPress secondary user already exists."
 else
     echo "Creating second WordPress user..."
-
     wp user create "$WP_USER" "$WP_USER_EMAIL" \
         --role=author \
         --user_pass="$USER_PASS" \
-        --allow-root
+        --allow-root || echo "User creation skipped."
 fi
-
 
 chown -R www-data:www-data /var/www/html
 chmod 640 /var/www/html/wp-config.php

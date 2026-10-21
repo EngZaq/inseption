@@ -26,4 +26,9 @@ ps:
 clean:
 	$(COMPOSE) down --rmi local --remove-orphans
 
-.PHONY: all up down stop start restart logs ps clean
+fclean:
+	$(COMPOSE) down -v --rmi all --remove-orphans
+
+re: fclean all
+
+.PHONY: all up down stop start restart logs ps clean fclean re
