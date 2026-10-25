@@ -56,12 +56,19 @@ fi
 
 if wp user get "$WP_USER" --allow-root >/dev/null 2>&1; then
     echo "WordPress secondary user already exists."
+
+elif wp user list --field=user_email --allow-root |
+    grep -Fxq "$WP_USER_EMAIL"; then
+    echo "ERROR: Email belongs to another WordPress account." >&2
+    exit 1
+
 else
     echo "Creating second WordPress user..."
+
     wp user create "$WP_USER" "$WP_USER_EMAIL" \
         --role=author \
         --user_pass="$USER_PASS" \
-        --allow-root || echo "User creation skipped."
+        --allow-root
 fi
 
 chown -R www-data:www-data /var/www/html
